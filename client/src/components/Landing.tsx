@@ -31,6 +31,9 @@ const Landing = () => {
   useEffect(() => {
     if (videoRef && videoRef.current) {
       getCam();
+      // console.log(
+      //   "Inside useEffect of Landing component, after getCam function"
+      // );
     }
   }, [videoRef]);
 

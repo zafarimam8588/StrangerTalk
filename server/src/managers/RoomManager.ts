@@ -16,7 +16,7 @@ export class RoomManager {
   }
 
   createRoom(user1: User, user2: User) {
-    console.log("inside createRoom");
+    // console.log("inside createRoom");
     // console.log(user1, user2);
     const roomId = this.generate().toString();
 
@@ -25,12 +25,14 @@ export class RoomManager {
       user2,
     });
 
-    user1.socket.emit("send-offer", {
+    const temp1 = user1.socket.emit("send-offer", {
       roomId,
     });
-    const temp = user2.socket.emit("send-offer", {
+    // console.log("BE: Inside function createRoom", temp1);
+    const temp2 = user2.socket.emit("send-offer", {
       roomId,
     });
+    // console.log("BE: Inside function createRoom", temp2);
   }
 
   onOffer(roomId: string, sdp: string, senderSocketId: string) {
@@ -45,7 +47,7 @@ export class RoomManager {
       sdp,
       roomId,
     });
-    console.log("BE: Inside function onOffer", temp);
+    // console.log("BE: Inside function onOffer", temp);
   }
   onAnswer(roomId: string, sdp: string, senderSocketid: string) {
     const room = this.rooms.get(roomId);
@@ -60,9 +62,9 @@ export class RoomManager {
       sdp,
       roomId,
     });
-    console.log(
-      "BE: Inside function onAnswer..................................................!!!!"
-    );
+    // console.log(
+    //   "BE: Inside function onAnswer..................................................!!!!"
+    // );
   }
   onIceCandidates(
     roomId: string,
@@ -76,11 +78,11 @@ export class RoomManager {
     }
     const receivingUser =
       room.user1.socket.id === senderSocketid ? room.user2 : room.user1;
-    console.log("BE:Inside function onIceCandidate", receivingUser.socket.id);
+    // console.log("BE:Inside function onIceCandidate", receivingUser.socket.id);
     const temp = receivingUser.socket.emit("add-ice-candidate", {
       candidate,
       type,
     });
-    console.log(temp);
+    // console.log(temp);
   }
 }

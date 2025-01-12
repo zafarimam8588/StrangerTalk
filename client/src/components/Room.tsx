@@ -30,18 +30,20 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
 
   // const socket = useSocket();
-  console.log("Inside Room fe");
+  // console.log("Inside Room component fe ,outside useeffect");
 
   useEffect(() => {
     // NEED TO CHECK THIS LINE AGAIN
     const socket = io("http://localhost:5000");
-    console.log("Inside Room fe useeffect");
-    socket.on("send-offer", async ({ roomId }) => {
-      console.log("inside send-offer");
+    socket.emit("add-user", { name });
+    // setSocket(socketInstance);
+    // console.log("Inside Room component fe,inside useeffect");
+    socket?.on("send-offer", async ({ roomId }) => {
+      // console.log("inside send-offer");
       setLobby(false);
       const pc = new RTCPeerConnection();
       setSendingPc(pc);
-      console.log(pc);
+      // console.log(pc);
 
       if (localVideoTrack) {
         pc.addTrack(localVideoTrack);
@@ -50,29 +52,34 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
         pc.addTrack(localAudioTrack);
       }
       pc.onicecandidate = async (e) => {
-        console.log("receiving ice candidate locally");
+        // console.log("inside onicecandidate");
         if (e.candidate) {
           socket.emit("add-ice-candidate", {
             candidate: e.candidate,
             type: "sender",
             roomId,
           });
+          // setSocket(socket);
         }
       };
       // console.log(pc);
       pc.onnegotiationneeded = async () => {
+        // console.log("inside onnegotiationneeded");
         const sdp = await pc.createOffer();
         await pc.setLocalDescription(sdp);
-        socket.emit("offer", {
+
+        socket?.emit("offer", {
           sdp,
           roomId,
         });
+
+        // console.log("insside onnegotiationneeded after emit offer");
       };
-      setSendingPc(pc);
+      // setSendingPc(pc);
     });
     socket?.on("offer", async ({ sdp: remoteSdp, roomId }) => {
       setLobby(false);
-      console.log("FE:Inside socket on:offer");
+      // console.log("inside offer");
       const pc = new RTCPeerConnection();
       const stream = new MediaStream();
       if (remoteVideoRef.current) {
@@ -80,9 +87,10 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
       }
       setRemoteMediaStream(stream);
       pc.ontrack = (e) => {
+        // console.log("inside pc.ontrack");
         const { track, type } = e;
-        console.log(track);
-        console.log(type);
+        // console.log(track);
+        // console.log(type);
         if (type == "audio") {
           setRemoteAudioTrack(track);
           //@ts-ignore
@@ -102,12 +110,11 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
       setReceivingPc(pc);
       window.pcr = pc;
 
-      console.log("socket............", roomId, sdp);
       pc.onicecandidate = async (e) => {
         if (!e.candidate) {
           return;
         }
-        console.log("on ice candidate on receiving seide");
+        // console.log("inside onicecandidate");
         if (e.candidate) {
           socket.emit("add-ice-candidate", {
             candidate: e.candidate,
@@ -130,11 +137,13 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
     });
     socket?.on("lobby", () => {
       setLobby(true);
+      // console.log(
+      //   "inside lobby,after setLobby(true) waiting for another person to join the room"
+      // );
     });
 
     socket?.on("add-ice-candidate", ({ candidate, type }) => {
-      console.log(candidate);
-      console.log("FE: add-ice-candidate");
+      // console.log("Inside add-ice-candidate");
       if (type == "sender") {
         setReceivingPc((pc) => {
           pc?.addIceCandidate(candidate);
@@ -147,10 +156,11 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
         });
       }
     });
-    console.log("remote video ref", remoteVideoRef);
+    // console.log("bottom of useeffect");
     setSocket(socket);
+    // console.log("socket is ", socket);
     return () => {
-      socket.close();
+      socket?.close();
       sendingPc?.close();
       receivingPc?.close();
       remoteVideoTrack?.stop();
@@ -162,6 +172,7 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
       if (localVideoTrack) {
         localVideoRef.current.srcObject = new MediaStream([localVideoTrack]);
         localVideoRef.current.play();
+        // console.log("inside local video ref useeffect");
       }
     }
   }, [localVideoRef]);

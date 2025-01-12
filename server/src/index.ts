@@ -17,14 +17,17 @@ const io = new Server(server, {
 const userManager = new UserManager();
 
 io.on("connection", (socket: Socket) => {
-  console.log("a user connected");
-  userManager.addUser("randomName", socket);
+  // console.log("a user connected");
+  socket.on("add-user", ({ name }) => {
+    userManager.addUser(name, socket);
+    console.log(name);
+  });
   socket.on("disconnect", () => {
-    console.log("user disconnected");
+    // console.log("user disconnected");
     userManager.removeUser(socket.id);
   });
 });
 
 server.listen(5000, () => {
-  console.log("Server is listning on 5000");
+  // console.log("Server is listning on 5000");
 });

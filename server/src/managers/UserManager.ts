@@ -27,19 +27,19 @@ export class UserManager {
   }
 
   initHandlers(socket: Socket) {
-    console.log("Inside init handler");
+    // console.log("Inside init handler");
     socket.on("offer", ({ sdp, roomId }: { sdp: string; roomId: string }) => {
-      console.log("BE: Inside soket:offer");
+      // console.log("BE: Inside soket:offer");
       this.roomManager.onOffer(roomId, sdp, socket.id);
     });
 
     socket.on("answer", ({ sdp, roomId }: { sdp: string; roomId: string }) => {
       this.roomManager.onAnswer(roomId, sdp, socket.id);
-      console.log("BE:Inside socket:answer");
+      // console.log("BE:Inside socket:answer");
     });
 
     socket.on("add-ice-candidate", ({ candidate, roomId, type }) => {
-      console.log("BE: Inside socket: add-ice-candidate ");
+      // console.log("BE: Inside socket: add-ice-candidate ");
       this.roomManager.onIceCandidates(roomId, socket.id, candidate, type);
     });
   }
@@ -56,7 +56,7 @@ export class UserManager {
 
     const id1 = this.queue.pop();
     const id2 = this.queue.pop();
-    console.log("id is " + id1 + " " + id2);
+    // console.log("id is " + id1 + " " + id2);
     const user1 = this.users.find((x) => x.socket.id === id1);
     const user2 = this.users.find((x) => x.socket.id === id2);
 
