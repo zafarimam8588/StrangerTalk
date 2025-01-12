@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Socket, io } from "socket.io-client";
-import { useSocket } from "../context/socketProvider";
+import { io } from "socket.io-client";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Loader2 } from "lucide-react";
+// import { useSocket } from "../context/socketProvider";
 
 declare global {
   interface Window {
@@ -15,7 +19,7 @@ interface RoomProp {
 
 const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
   const [lobby, setLobby] = useState(true);
-  const [socket, setSocket] = useState<null | Socket>(null);
+  // const [socket, setSocket] = useState<null | Socket>(null);
   const [sendingPc, setSendingPc] = useState<null | RTCPeerConnection>(null);
   const [receivingPc, setReceivingPc] = useState<null | RTCPeerConnection>(
     null
@@ -24,8 +28,8 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
     useState<MediaStreamTrack | null>(null);
   const [remoteAudioTrack, setRemoteAudioTrack] =
     useState<MediaStreamTrack | null>(null);
-  const [remoteMediaStream, setRemoteMediaStream] =
-    useState<MediaStream | null>(null);
+  // const [remoteMediaStream, setRemoteMediaStream] =
+  //   useState<MediaStream | null>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -85,7 +89,7 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = stream;
       }
-      setRemoteMediaStream(stream);
+      // setRemoteMediaStream(stream);
       pc.ontrack = (e) => {
         // console.log("inside pc.ontrack");
         const { track, type } = e;
@@ -157,7 +161,7 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
       }
     });
     // console.log("bottom of useeffect");
-    setSocket(socket);
+    // setSocket(socket);
     // console.log("socket is ", socket);
     return () => {
       socket?.close();
@@ -178,11 +182,62 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
   }, [localVideoRef]);
 
   return (
-    <div>
-      Hi {name}
-      <video autoPlay width={400} height={400} ref={localVideoRef} />
-      {lobby ? "Waiting to connect you to someone" : null}
-      <video autoPlay width={400} height={400} ref={remoteVideoRef} />
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 p-2 sm:p-4 md:p-8">
+      <div className="container mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 mb-4 sm:mb-8">
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="bg-white/10 backdrop-blur-sm">
+              {name}
+            </Badge>
+          </div>
+          <Button variant="outline" className="bg-white/10 backdrop-blur-sm">
+            Next Person
+          </Button>
+        </div>
+
+        {/* Video Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 md:gap-8">
+          {/* Local Video */}
+          <Card className="bg-black/20 backdrop-blur-lg border-white/20 shadow-xl overflow-hidden w-full">
+            <CardContent className="p-0 aspect-video relative w-full">
+              <video
+                autoPlay
+                ref={localVideoRef}
+                className="w-full h-full object-cover"
+              />
+              <Badge className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm">
+                You
+              </Badge>
+            </CardContent>
+          </Card>
+
+          {/* Remote Video */}
+          <Card className="bg-black/20 backdrop-blur-lg border-white/20 shadow-xl overflow-hidden w-full">
+            <CardContent className="p-0 aspect-video relative w-full">
+              {lobby ? (
+                <div className="w-full h-full flex items-center justify-center bg-black/40">
+                  <div className="text-center space-y-4">
+                    <Loader2 className="h-8 w-8 animate-spin mx-auto text-purple-500" />
+                    <p className="text-sm sm:text-base text-muted-foreground px-4">
+                      Finding someone to chat with...
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <video
+                  autoPlay
+                  ref={remoteVideoRef}
+                  className="w-full h-full object-cover"
+                />
+              )}
+              <Badge className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm">
+                Stranger
+              </Badge>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };
