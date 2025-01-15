@@ -1,0 +1,36 @@
+name: Build on PR
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone the repo
+        uses: actions/checkout@v3
+
+      - name: install node js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          cd server
+          npm install
+
+      - name: Build the code
+        run: |
+          cd server
+          npm run build
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: server/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/server/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-

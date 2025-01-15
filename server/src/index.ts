@@ -28,6 +28,6 @@ io.on("connection", (socket: Socket) => {
   });
 });
 
-server.listen(5000, () => {
+server.listen(6000, () => {
   // console.log("Server is listning on 5000");
 });
