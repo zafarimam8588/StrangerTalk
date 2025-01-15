@@ -1,4 +1,4 @@
-# You have to add .env file to your ec2 and put ssh host in github secret, then it will work
+# You have to put ssh host in github secret, then it will work
 name: Build and deploy to Docker Hub and EC2
 
 on:
