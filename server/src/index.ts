@@ -16,6 +16,10 @@ const io = new Server(server, {
 });
 const userManager = new UserManager();
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the backend!");
+});
+
 io.on("connection", (socket: Socket) => {
   // console.log("a user connected");
   socket.on("add-user", ({ name }) => {
