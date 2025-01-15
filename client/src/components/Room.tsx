@@ -38,7 +38,7 @@ const Room = ({ name, localAudioTrack, localVideoTrack }: RoomProp) => {
 
   useEffect(() => {
     // NEED TO CHECK THIS LINE AGAIN
-    const socket = io("http://localhost:5000");
+    const socket = io("ec2-3-110-47-131.ap-south-1.compute.amazonaws.com:3000");
     socket.emit("add-user", { name });
     // setSocket(socketInstance);
     // console.log("Inside Room component fe,inside useeffect");
