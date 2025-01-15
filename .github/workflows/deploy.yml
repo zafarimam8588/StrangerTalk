@@ -38,9 +38,8 @@ jobs:
           script: |
             IMAGE_TAG=${{ github.run_number }}
             sudo docker pull zafar8588/omegle:$IMAGE_TAG
-            sudo docker stop web-app || true
-            sudo docker rm web-app || true
-            sudo docker run -d --name web-app -p 3000:3000 \
-              --env-file /home/ubuntu/omegle/.env \
+            sudo docker stop omegle || true
+            sudo docker rm omegle || true
+            sudo docker run -d --name omegle -p 3000:3000 \
               zafar8588/omegle:$IMAGE_TAG
-            sudo docker ps | grep web-app
+            sudo docker ps | grep omegle
