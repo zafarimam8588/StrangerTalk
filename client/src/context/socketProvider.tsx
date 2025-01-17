@@ -1,5 +1,5 @@
-import { createContext, useContext, useMemo } from "react";
-import { Socket, io } from "socket.io-client";
+import { createContext, useContext } from "react";
+import { Socket } from "socket.io-client";
 
 const SocketContext = createContext<Socket | null | string>(null);
 
