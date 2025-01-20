@@ -1,4 +1,4 @@
-# Omegle Clone
+# StrangerTalk
 
 This is a clone of the popular video chat platform, Omegle, built with TypeScript, React, Express, and Socket.IO. The application allows users to connect randomly with other users in a one-on-one video chat experience.
 
@@ -48,8 +48,8 @@ This is a clone of the popular video chat platform, Omegle, built with TypeScrip
   1. Clone the repository:
 
   ```
-  https://github.com/zafarimam8588/omegle.git
-  cd omegle
+  git clone https://github.com/zafarimam8588/StrangerTalk.git
+  cd StrangerTalk
   ```
 
   2. Install dependencies:
